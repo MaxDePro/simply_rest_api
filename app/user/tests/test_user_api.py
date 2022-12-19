@@ -12,8 +12,7 @@ ME_URL = reverse('user:me')
 
 
 def create_user(**params):
-    user = get_user_model().objects.create_user(**params)
-    return user
+    return get_user_model().objects.create_user(**params)
 
 
 class PublicUserApiTests(TestCase):
@@ -110,7 +109,7 @@ class PublicUserApiTests(TestCase):
         """Test is authenticated is required for users"""
         res = self.client.get(ME_URL)
 
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateUserApiTests(TestCase):
@@ -131,10 +130,12 @@ class PrivateUserApiTests(TestCase):
         res = self.client.get(ME_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, {
+        self.assertEqual(
+            res.data, {
                          'name': self.user.name,
                          'email': self.user.email
-        })
+            }
+        )
 
     def test_post_me_not_allowed(self):
         """Test that POST is not allowed on the me url"""
@@ -149,6 +150,6 @@ class PrivateUserApiTests(TestCase):
 
         self.user.refresh_from_db()
 
-        self.assertEqual(res.user.name, payload['name'])
+        self.assertEqual(self.user.name, payload['name'])
         self.assertTrue(self.user.check_password(payload['password']))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
