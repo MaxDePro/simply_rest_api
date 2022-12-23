@@ -6,6 +6,8 @@ from django.contrib.auth import get_user_model
 
 from core import models
 
+from decimal import Decimal
+
 
 def sample_user(email='user@example.com', password='testpass123'):
     """Create a sample user"""
@@ -72,3 +74,14 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(ingredient), ingredient.name)
+
+    def test_recipe_str(self):
+        """Test the ingredient string representation"""
+        recipe = models.Recipe.objects.create(
+            user=sample_user(),
+            title='Sample recipe',
+            time_minutes=5,
+            price=Decimal('5.25')
+        )
+
+        self.assertEqual(str(recipe), recipe.title)
