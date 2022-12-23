@@ -51,8 +51,8 @@ class PrivateRecipeApiTests(TestCase):
 
     def test_retrieve_recipes(self):
         """Test retrieving of recipes"""
-        sample_recipe(self.user)
-        sample_recipe(self.user)
+        sample_recipe(user=self.user)
+        sample_recipe(user=self.user)
 
         res = self.client.get(RECIPES_URL)
 
@@ -68,9 +68,8 @@ class PrivateRecipeApiTests(TestCase):
             'user2@example.com',
             'testpass123'
         )
-
-        sample_recipe(user=user2)
         sample_recipe(user=self.user)
+        sample_recipe(user=user2)
 
         res = self.client.get(RECIPES_URL)
 
@@ -79,4 +78,4 @@ class PrivateRecipeApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 1)
-        self.assertEqual(len(res.data), serializer.data)
+        self.assertEqual(res.data, serializer.data)
